@@ -247,7 +247,7 @@ public class RecommendFragment extends Fragment {
                 String classtime;
                 String how;
                 String point;
-
+                String realTime;
 
 
                 while (count < jsonArray.length()) {
@@ -266,15 +266,20 @@ public class RecommendFragment extends Fragment {
                     classtime = object.getString("classtime");
                     how = object.getString("how");
                     point = object.getString("point");
+                    realTime = object.getString("realTime");
 
                     classtime_raw = classtime_raw.trim();
                     classtime_raw = classtime_raw.replaceAll("\"", "");
                     classtime_raw = classtime_raw.replaceAll(" ", "");
                     classtime_raw = classtime_raw.replace("[", "");
                     classtime_raw = classtime_raw.replaceAll("]", "");
+                    realTime = realTime.replaceAll("\"", "");
+
+                    classroom_raw = classroom_raw.trim();
+                    classroom_raw = classroom_raw.replaceAll("\"", "");
 
                     Lecture lecture = new Lecture(id, department, grade, category, number, lecturename,
-                            professor, classroom_raw, classtime_raw, classroom, classtime, how, Integer.parseInt(point));
+                            professor, classroom_raw, classtime_raw, classroom, classtime, how, Integer.parseInt(point), realTime);
 
 
                     recommendList.add(lecture);
@@ -293,7 +298,7 @@ public class RecommendFragment extends Fragment {
 
                     frag_recommend_info.setVisibility(View.INVISIBLE);
 
-                    totalRecommendList.add(new Lecture(0, "", "", "", "", "강의 추천", "", "", "", "", "", "", 0));
+                    totalRecommendList.add(new Lecture(0, "", "", "", "", "강의 추천", "", "", "", "", "", "", 0, ""));
                     totalRecommendList.addAll(recommendList);
 
                 }

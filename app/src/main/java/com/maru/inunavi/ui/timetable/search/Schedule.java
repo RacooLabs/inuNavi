@@ -205,9 +205,6 @@ public class Schedule {
 
                     if (this.lectureSchedule[i+1] == null){
 
-
-
-
                         TextView textView = new TextView(context);
                         textView.setText(lectureSchedule[i].getLecturename());
                         textView.setTextColor(Color.WHITE);
@@ -226,8 +223,8 @@ public class Schedule {
                         String lectureName = lectureSchedule[i].getLecturename();
                         String lectureNumber = lectureSchedule[i].getNumber();
                         String professor = lectureSchedule[i].getProfessor();
-                        String classTime = lectureSchedule[i].getClasstime_raw();
-                        String classRoom = lectureSchedule[i].getClassroom_raw();
+                        String realClassTime = lectureSchedule[i].getRealTime();
+                        String classRoom = lectureSchedule[i].getClassroom();
 
                         textView.setOnClickListener(new View.OnClickListener() {
 
@@ -236,8 +233,9 @@ public class Schedule {
 
                                 AlertDialog.Builder dlg = new AlertDialog.Builder(context);
                                 dlg.setTitle(lectureName);
-                                dlg.setMessage(professor + "\n" + classTime+ "\n" +
-                                        classRoom);
+                                dlg.setMessage(professor + "\n" + classRoom+ "\n" +
+                                        realClassTime);
+
 
                                 dlg.setPositiveButton("확인",new DialogInterface.OnClickListener(){
                                     public void onClick(DialogInterface dialog, int which) {
@@ -324,8 +322,8 @@ public class Schedule {
                         String lectureName = lectureSchedule[i].getLecturename();
                         String lectureNumber = lectureSchedule[i].getNumber();
                         String professor = lectureSchedule[i].getProfessor();
-                        String classTime = lectureSchedule[i].getClasstime_raw();
-                        String classRoom = lectureSchedule[i].getClassroom_raw();
+                        String realClassTime = lectureSchedule[i].getRealTime();
+                        String classRoom = lectureSchedule[i].getClassroom();
 
                         textView.setOnClickListener(new View.OnClickListener() {
 
@@ -334,8 +332,8 @@ public class Schedule {
 
                                 AlertDialog.Builder dlg = new AlertDialog.Builder(context);
                                 dlg.setTitle(lectureName); //제목
-                                dlg.setMessage(professor + "\n" + classTime+ "\n" +
-                                        classRoom);
+                                dlg.setMessage(professor + "\n" + classRoom+ "\n" +
+                                        realClassTime);
 //                버튼 클릭시 동작
                                 dlg.setPositiveButton("확인",new DialogInterface.OnClickListener(){
                                     public void onClick(DialogInterface dialog, int which) {

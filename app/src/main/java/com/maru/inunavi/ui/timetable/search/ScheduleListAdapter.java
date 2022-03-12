@@ -138,7 +138,8 @@ public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapte
 
         }
 
-        holder.textView_schedule_list_time.setText(mData.get(position).getClasstime_raw());
+        holder.textView_schedule_list_time.setText(mData.get(position).getClassroom() + "\n" + mData.get(position).getRealTime());
+
     }
 
     @Override

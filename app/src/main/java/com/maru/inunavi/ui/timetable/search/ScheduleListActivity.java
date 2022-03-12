@@ -192,6 +192,7 @@ public class ScheduleListActivity extends AppCompatActivity {
                 String classtime;
                 String how;
                 String point;
+                String realTime;
 
 
                 while (count < jsonArray.length()) {
@@ -210,6 +211,7 @@ public class ScheduleListActivity extends AppCompatActivity {
                     classtime = object.getString("classtime");
                     how = object.getString("how");
                     point = object.getString("point");
+                    realTime = object.getString("realTime");
 
                     lecturename = lecturename.replaceAll("\"", "");
                     classtime_raw = classtime_raw.trim();
@@ -218,8 +220,14 @@ public class ScheduleListActivity extends AppCompatActivity {
                     classtime_raw = classtime_raw.replace("[", "");
                     classtime_raw = classtime_raw.replaceAll("]", "");
 
+                    classroom_raw = classroom_raw.trim();
+                    classroom_raw = classroom_raw.replaceAll("\"", "");
+
+
+                    realTime = realTime.replaceAll("\"", "");
+
                     Lecture lecture = new Lecture(id, department, grade, category, number, lecturename,
-                            professor, classroom_raw, classtime_raw, classroom, classtime, how, Integer.parseInt(point));
+                            professor, classroom_raw, classtime_raw, classroom, classtime, how, Integer.parseInt(point), realTime);
 
                     scheduleList.add(lecture);
 

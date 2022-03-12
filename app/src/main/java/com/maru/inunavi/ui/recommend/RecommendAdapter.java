@@ -180,8 +180,8 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecommendAdapter.MyVi
                         mData.get(position).getPoint() + "학점 " + mData.get(position).getNumber());
 
             }
-            
-            holder.textView_recommend_time.setText(mData.get(position).getClasstime_raw());
+
+            holder.textView_recommend_time.setText(mData.get(position).getClassroom() + "\n" + mData.get(position).getRealTime());
 
 
 
@@ -262,7 +262,6 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecommendAdapter.MyVi
                         AddRequest addRequest = new AddRequest(userEmail, mData.get(holder.getAdapterPosition()).getNumber(),responseListener);
                         RequestQueue queue = Volley.newRequestQueue(parent);
                         queue.add(addRequest);
-
 
                     }
 
@@ -366,6 +365,7 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecommendAdapter.MyVi
                 String classtime;
                 String how;
                 String point;
+                String realTime;
 
 
 
@@ -385,6 +385,8 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecommendAdapter.MyVi
                     classtime = object.getString("classtime");
                     how = object.getString("how");
                     point = object.getString("point");
+                    realTime = object.getString("realTime");
+
 
                     lecturename = lecturename.replaceAll("\"", "");
                     classtime_raw = classtime_raw.trim();
@@ -392,9 +394,13 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecommendAdapter.MyVi
                     classtime_raw = classtime_raw.replaceAll(" ", "");
                     classtime_raw = classtime_raw.replace("[", "");
                     classtime_raw = classtime_raw.replaceAll("]", "");
+                    realTime = realTime.replaceAll("\"", "");
+
+                    classroom_raw = classroom_raw.trim();
+                    classroom_raw = classroom_raw.replaceAll("\"", "");
 
                     Lecture lecture = new Lecture(id, department, grade, category, number, lecturename,
-                            professor, classroom_raw, classtime_raw, classroom, classtime, how, Integer.parseInt(point));
+                            professor, classroom_raw, classtime_raw, classroom, classtime, how, Integer.parseInt(point), realTime);
 
                     schedule.addSchedule(lecture);
 

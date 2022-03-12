@@ -145,7 +145,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
         }
 
-        holder.textView_search_list_time.setText(mData.get(position).getClasstime_raw());
+        holder.textView_search_list_time.setText(mData.get(position).getClassroom() + "\n" + mData.get(position).getRealTime());
 
         holder.tita_search_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -212,7 +212,13 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
                     };
 
-                    userEmail = (MainActivity.cookieManager.getCookie(sUrl)).replace("cookieKey=", "");
+                    try{
+
+                        userEmail = (MainActivity.cookieManager.getCookie(sUrl)).replace("cookieKey=", "");
+
+                    }catch (Exception e){
+
+                    }
 
                     AddRequest addRequest = new AddRequest(userEmail, mData.get(holder.getAdapterPosition()).getNumber(),responseListener);
                     RequestQueue queue = Volley.newRequestQueue(parent);
@@ -309,6 +315,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
                 String classtime;
                 String how;
                 String point;
+                String realTime;
 
 
 
@@ -328,6 +335,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
                     classtime = object.getString("classtime");
                     how = object.getString("how");
                     point = object.getString("point");
+                    realTime = object.getString("realTime");
+
 
                     lecturename = lecturename.replaceAll("\"", "");
                     classtime_raw = classtime_raw.trim();
@@ -335,9 +344,13 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
                     classtime_raw = classtime_raw.replaceAll(" ", "");
                     classtime_raw = classtime_raw.replace("[", "");
                     classtime_raw = classtime_raw.replaceAll("]", "");
+                    realTime = realTime.replaceAll("\"", "");
+
+                    classroom_raw = classroom_raw.trim();
+                    classroom_raw = classroom_raw.replaceAll("\"", "");
 
                     Lecture lecture = new Lecture(id, department, grade, category, number, lecturename,
-                            professor, classroom_raw, classtime_raw, classroom, classtime, how, Integer.parseInt(point));
+                            professor, classroom_raw, classtime_raw, classroom, classtime, how, Integer.parseInt(point), realTime);
 
                     schedule.addSchedule(lecture);
 

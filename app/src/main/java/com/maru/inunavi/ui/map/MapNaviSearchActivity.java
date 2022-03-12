@@ -28,6 +28,7 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
@@ -35,6 +36,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -269,8 +273,42 @@ public class MapNaviSearchActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(Location location) {
 
-                    myCurrentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                    SearchBackgroundTask();
+                    if (location != null) {
+                        myCurrentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                        SearchBackgroundTask();
+                    }else{
+
+                        LocationRequest mRequest = LocationRequest.create()
+                                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                                .setInterval(800)
+                                .setFastestInterval(500);
+
+                        LocationCallback mLocationCallback = new LocationCallback() {
+                            @Override
+                            public void onLocationResult(@NonNull LocationResult locationResult) {
+                                super.onLocationResult(locationResult);
+
+                                if (locationResult == null)
+                                    return;
+
+                                for (Location location : locationResult.getLocations()) {
+                                    LatLng mLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                                    fusedLocationClient.removeLocationUpdates(this);
+                                }
+
+                            }
+                        };
+
+                        if (ActivityCompat.checkSelfPermission(getBaseContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getBaseContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                            return;
+                        }
+
+                        fusedLocationClient.requestLocationUpdates(mRequest, mLocationCallback, null);
+
+                    }
+
+
 
                 }
 

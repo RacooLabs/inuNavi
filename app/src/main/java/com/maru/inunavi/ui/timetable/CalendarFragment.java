@@ -599,6 +599,7 @@ public class CalendarFragment extends Fragment {
                 String classtime;
                 String how;
                 String point;
+                String realTime;
 
 
                 while (count < jsonArray.length()) {
@@ -617,6 +618,8 @@ public class CalendarFragment extends Fragment {
                     classtime = object.getString("classtime");
                     how = object.getString("how");
                     point = object.getString("point");
+                    realTime = object.getString("realTime");
+
 
                     lecturename = lecturename.replaceAll("\"", "");
                     classtime_raw = classtime_raw.trim();
@@ -624,9 +627,13 @@ public class CalendarFragment extends Fragment {
                     classtime_raw = classtime_raw.replaceAll(" ", "");
                     classtime_raw = classtime_raw.replace("[", "");
                     classtime_raw = classtime_raw.replaceAll("]", "");
+                    realTime = realTime.replaceAll("\"", "");
+
+                    classroom_raw = classroom_raw.trim();
+                    classroom_raw = classroom_raw.replaceAll("\"", "");
 
                     Lecture lecture = new Lecture(id, department, grade, category, number, lecturename,
-                            professor, classroom_raw, classtime_raw, classroom, classtime, how, Integer.parseInt(point));
+                            professor, classroom_raw, classtime_raw, classroom, classtime, how, Integer.parseInt(point), realTime);
 
                     schedule.addSchedule(lecture);
 
@@ -753,9 +760,26 @@ public class CalendarFragment extends Fragment {
                     Collections.sort(CSEArray);
                     Collections.sort(categoryList);
 
-
-                    CSEArray.remove("전체");
+                    /*majorArray.remove("전체");
+                    CSEArray.remove("전체");*/
                     categoryList.remove("전체");
+
+
+                    ArrayList<String> tmpMajorArray = majorArray;
+                    ArrayList<String> tmpCSEArray = CSEArray;
+
+                    tmpMajorArray.remove("전체");
+                    tmpCSEArray.remove("전체");
+
+                    majorArray = new ArrayList<String>();
+                    CSEArray = new ArrayList<String>();
+
+                    majorArray.add("전체");
+                    CSEArray.add("전체");
+
+                    majorArray.addAll(tmpMajorArray);
+                    CSEArray.addAll(tmpCSEArray);
+
 
                     frag_tita_year_semester.setText(year + "년 " + semester + "학기");
 

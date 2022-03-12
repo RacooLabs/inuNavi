@@ -61,8 +61,10 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.MapView;
@@ -241,7 +243,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
     // 다음 강의실 찾기 변수
 
 
-
     // 다음 강의실 정보 결과 응답 POST 방식
     private Response.Listener<String> responseNextPlaceListener;
 
@@ -278,7 +279,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
                 map_frag_navi_searchWrapper, navi_button_wrapper, AR_button_wrapper);
 
     }
-
 
 
     @Nullable
@@ -342,7 +342,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
         map_frag_navi_detail_stepCount = layout.findViewById(R.id.map_frag_navi_detail_stepCount);
 
 
-
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
         //fetchLocation();
 
@@ -364,15 +363,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
         searchKeywordList.add("부속건물");
         searchKeywordList.add("footer");
 
-        searchKeywordIconList.add( getResources().getDrawable(R.drawable.ic_cancel_black_24dp, null));
-        searchKeywordIconList.add( getResources().getDrawable(R.drawable.ic_restaurant_black_24dp, null));
-        searchKeywordIconList.add( getResources().getDrawable(R.drawable.ic_local_cafe_black_24dp, null));
-        searchKeywordIconList.add( getResources().getDrawable(R.drawable.ic_local_convenience_store_black_24dp, null));
-        searchKeywordIconList.add( getResources().getDrawable(R.drawable.ic_print_black_24dp, null));
-        searchKeywordIconList.add( getResources().getDrawable(R.drawable.ic_smoking_rooms_black_24dp, null));
-        searchKeywordIconList.add( getResources().getDrawable(R.drawable.ic_sports_tennis_black_24dp, null));
-        searchKeywordIconList.add( getResources().getDrawable(R.drawable.ic_apartment_black_24dp, null));
-        searchKeywordIconList.add( getResources().getDrawable(R.drawable.ic_cancel_black_24dp, null));
+        searchKeywordIconList.add(getResources().getDrawable(R.drawable.ic_cancel_black_24dp, null));
+        searchKeywordIconList.add(getResources().getDrawable(R.drawable.ic_restaurant_black_24dp, null));
+        searchKeywordIconList.add(getResources().getDrawable(R.drawable.ic_local_cafe_black_24dp, null));
+        searchKeywordIconList.add(getResources().getDrawable(R.drawable.ic_local_convenience_store_black_24dp, null));
+        searchKeywordIconList.add(getResources().getDrawable(R.drawable.ic_print_black_24dp, null));
+        searchKeywordIconList.add(getResources().getDrawable(R.drawable.ic_smoking_rooms_black_24dp, null));
+        searchKeywordIconList.add(getResources().getDrawable(R.drawable.ic_sports_tennis_black_24dp, null));
+        searchKeywordIconList.add(getResources().getDrawable(R.drawable.ic_apartment_black_24dp, null));
+        searchKeywordIconList.add(getResources().getDrawable(R.drawable.ic_cancel_black_24dp, null));
 
 
         searchKeywordAdapter = new SearchKeywordAdapter(searchKeywordList, searchKeywordIconList);
@@ -512,7 +511,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
 
                             int CallType = intent.getIntExtra("CallType", 0);
 
-                            switch (CallType){
+                            switch (CallType) {
 
                                 // 출발 버튼 눌렀을 때
                                 case 1001:
@@ -522,13 +521,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
                                     break;
 
 
-                                    // 도착 버튼 눌렀을 때
+                                // 도착 버튼 눌렀을 때
 
                                 case 1002:
 
                                     setFindRouteToPlace(detailFocusedPlace);
 
-                                   break;
+                                    break;
 
                             }
 
@@ -691,17 +690,52 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
                                         @Override
                                         public void onSuccess(Location location) {
 
-                                            startLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                                            startPlaceCode = "LOCATION";
+                                            if (location != null) {
 
-                                            setStartMarker(startLocation);
+                                                startLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                                                startPlaceCode = "LOCATION";
 
-                                            // 경로 그리는 메소드
-                                            if (!map_frag_navi_searchBar_Start.getText().toString().equals("") &&
-                                                    !(map_frag_navi_searchBar_End.getText().toString().equals(""))) {
+                                                setStartMarker(startLocation);
 
-                                                NaviInfo naviInfo = new NaviInfo(startPlaceCode, endPlaceCode, startLocation, endLocation);
-                                                showBriefingDirection(naviInfo);
+                                                // 경로 그리는 메소드
+                                                if (!map_frag_navi_searchBar_Start.getText().toString().equals("") &&
+                                                        !(map_frag_navi_searchBar_End.getText().toString().equals(""))) {
+
+                                                    NaviInfo naviInfo = new NaviInfo(startPlaceCode, endPlaceCode, startLocation, endLocation);
+                                                    showBriefingDirection(naviInfo);
+
+                                                }
+
+
+                                            }else{
+
+                                                LocationRequest mRequest = LocationRequest.create()
+                                                        .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                                                        .setInterval(800)
+                                                        .setFastestInterval(500);
+
+                                                LocationCallback mLocationCallback = new LocationCallback() {
+                                                    @Override
+                                                    public void onLocationResult(@NonNull LocationResult locationResult) {
+                                                        super.onLocationResult(locationResult);
+
+                                                        if (locationResult == null)
+                                                            return;
+
+                                                        for (Location location : locationResult.getLocations()) {
+                                                            LatLng mLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                                                            fusedLocationClient.removeLocationUpdates(this);
+                                                        }
+
+                                                    }
+                                                };
+
+                                                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                                                    return;
+                                                }
+
+                                                fusedLocationClient.requestLocationUpdates(mRequest, mLocationCallback, null);
 
                                             }
 
@@ -725,23 +759,60 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
                                         @Override
                                         public void onSuccess(Location location) {
 
-                                            endLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                                            endPlaceCode = "LOCATION";
-                                            setEndMarker(endLocation);
+                                            if (location != null) {
 
-                                            // 경로 그리는 메소드
-                                            if (!map_frag_navi_searchBar_Start.getText().toString().equals("") &&
-                                                    !(map_frag_navi_searchBar_End.getText().toString().equals(""))) {
+                                                endLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                                                endPlaceCode = "LOCATION";
+                                                setEndMarker(endLocation);
 
-                                                NaviInfo naviInfo = new NaviInfo(startPlaceCode, endPlaceCode, startLocation, endLocation);
-                                                showBriefingDirection(naviInfo);
+                                                // 경로 그리는 메소드
+                                                if (!map_frag_navi_searchBar_Start.getText().toString().equals("") &&
+                                                        !(map_frag_navi_searchBar_End.getText().toString().equals(""))) {
+
+                                                    NaviInfo naviInfo = new NaviInfo(startPlaceCode, endPlaceCode, startLocation, endLocation);
+                                                    showBriefingDirection(naviInfo);
+
+                                                }
+
+
+                                            }else{
+
+                                                LocationRequest mRequest = LocationRequest.create()
+                                                        .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                                                        .setInterval(800)
+                                                        .setFastestInterval(500);
+
+                                                LocationCallback mLocationCallback = new LocationCallback() {
+                                                    @Override
+                                                    public void onLocationResult(@NonNull LocationResult locationResult) {
+                                                        super.onLocationResult(locationResult);
+
+                                                        if (locationResult == null)
+                                                            return;
+
+                                                        for (Location location : locationResult.getLocations()) {
+                                                            LatLng mLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                                                            fusedLocationClient.removeLocationUpdates(this);
+                                                        }
+
+                                                    }
+                                                };
+
+                                                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                                                    return;
+                                                }
+
+                                                fusedLocationClient.requestLocationUpdates(mRequest, mLocationCallback, null);
+
 
                                             }
 
 
+
+
                                         }
                                     });
-
 
 
                                     break;
@@ -840,20 +911,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
                 startLocation = endLocation;
                 endLocation = tmpLocation;
 
-                if(startLocation != null && endLocation == null){
+                if (startLocation != null && endLocation == null) {
 
                     setStartMarker(startLocation);
 
-                }else if (startLocation == null && endLocation != null){
+                } else if (startLocation == null && endLocation != null) {
 
                     setEndMarker(endLocation);
 
-                }else if (startLocation != null && endLocation != null) {
+                } else if (startLocation != null && endLocation != null) {
 
                     setStartMarker(startLocation);
                     setEndMarker(endLocation);
 
-                }else{
+                } else {
 
 
                 }
@@ -885,8 +956,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
                             int CallType = intent.getIntExtra("CallType", 0);
 
 
-
-                            switch (CallType){
+                            switch (CallType) {
 
 
                                 case 4001:
@@ -935,12 +1005,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
 
                             //로그인 요청, 쿠키 저장
 
-                            cookieManager.setCookie(url,"cookieKey="+userEmail);
+                            cookieManager.setCookie(url, "cookieKey=" + userEmail);
                             MainActivity.userMajor = userMajor;
 
                             MainActivity.autoLogin = true;
 
-                            if(MainActivity.autoLogin) {
+                            if (MainActivity.autoLogin) {
 
                                 // 자동 로그인 데이터 저장
                                 SharedPreferences auto = getContext().getSharedPreferences("autoLogin", Activity.MODE_PRIVATE);
@@ -965,7 +1035,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
                 });
 
 
-
         map_frag_navi_searchButton_now.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -974,7 +1043,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
                 isLogin = false;
 
 
-                if(cookieManager.getCookie(url) == null || cookieManager.getCookie(url).equals("")) {
+                if (cookieManager.getCookie(url) == null || cookieManager.getCookie(url).equals("")) {
 
                     isLogin = false;
 
@@ -997,12 +1066,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
                                 }
                             });
 
-                    AlertDialog msgDlg = msgBuilder.create(); msgDlg.show();
+                    AlertDialog msgDlg = msgBuilder.create();
+                    msgDlg.show();
 
 
                     return;
 
-                }else{
+                } else {
 
                     isLogin = true;
 
@@ -1040,9 +1110,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
 
                         // 정보 초기화
 
-                        String nextPlaceCode="";
-                        String nextPlaceLocationString="";
-                        String nextPlaceTitle="";
+                        String nextPlaceCode = "";
+                        String nextPlaceLocationString = "";
+                        String nextPlaceTitle = "";
                         LatLng nextPlaceLocation = null;
 
 
@@ -1050,7 +1120,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
                         nextPlaceLocationString = jsonResponse.getString("nextPlaceLocationString");
                         nextPlaceTitle = jsonResponse.getString("nextPlaceTitle");
 
-                        if(nextPlaceCode.substring(0,2).equals("ZZ")){
+                        if (nextPlaceCode.substring(0, 2).equals("ZZ")) {
 
                             AlertDialog.Builder msgBuilder = new AlertDialog.Builder(getContext())
                                     .setTitle("알림")
@@ -1062,10 +1132,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
                                         }
                                     });
 
-                            AlertDialog msgDlg = msgBuilder.create(); msgDlg.show();
+                            AlertDialog msgDlg = msgBuilder.create();
+                            msgDlg.show();
 
 
-                        }else if(nextPlaceCode.substring(0,2).equals("NC")){
+                        } else if (nextPlaceCode.substring(0, 2).equals("NC")) {
 
                             AlertDialog.Builder msgBuilder = new AlertDialog.Builder(getContext())
                                     .setTitle("알림")
@@ -1077,10 +1148,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
                                         }
                                     });
 
-                            AlertDialog msgDlg = msgBuilder.create(); msgDlg.show();
+                            AlertDialog msgDlg = msgBuilder.create();
+                            msgDlg.show();
 
 
-                        }else {
+                        } else {
 
 
                             String[] locationSplit = nextPlaceLocationString.split(",");
@@ -1108,24 +1180,58 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
                                 @Override
                                 public void onSuccess(Location location) {
 
-                                    startLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                                    startPlaceCode = "LOCATION";
+                                    if (location != null) {
+                                        startLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                                        startPlaceCode = "LOCATION";
 
-                                    // 경로 그리는 메소드
-                                    if (startLocation != null && endLocation != null && isLogin) {
+                                        // 경로 그리는 메소드
+                                        if (startLocation != null && endLocation != null && isLogin) {
 
-                                        NaviInfo naviInfo = new NaviInfo(startPlaceCode, endPlaceCode, startLocation, endLocation);
-                                        showBriefingDirection(naviInfo);
+                                            NaviInfo naviInfo = new NaviInfo(startPlaceCode, endPlaceCode, startLocation, endLocation);
+                                            showBriefingDirection(naviInfo);
+
+                                        }
+
+                                    }else{
+
+                                        LocationRequest mRequest = LocationRequest.create()
+                                                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                                                .setInterval(800)
+                                                .setFastestInterval(500);
+
+                                        LocationCallback mLocationCallback = new LocationCallback() {
+                                            @Override
+                                            public void onLocationResult(@NonNull LocationResult locationResult) {
+                                                super.onLocationResult(locationResult);
+
+                                                if (locationResult == null)
+                                                    return;
+
+                                                for (Location location : locationResult.getLocations()) {
+                                                    LatLng mLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                                                    fusedLocationClient.removeLocationUpdates(this);
+                                                }
+
+                                            }
+                                        };
+
+                                        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                                            return;
+                                        }
+
+                                        fusedLocationClient.requestLocationUpdates(mRequest, mLocationCallback, null);
 
                                     }
+
+
                                 }
                             });
 
                         }
 
 
-
-                    }else{
+                    } else {
 
                         AlertDialog.Builder msgBuilder = new AlertDialog.Builder(getContext())
                                 .setTitle("알림")
@@ -1137,15 +1243,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
                                     }
                                 });
 
-                        AlertDialog msgDlg = msgBuilder.create(); msgDlg.show();
+                        AlertDialog msgDlg = msgBuilder.create();
+                        msgDlg.show();
 
                     }
 
 
-
-
                 } catch (Exception e) {
-
 
 
                 }
@@ -1231,7 +1335,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
 
         gMap = googleMap;
 
-        if(getContext()!=null){
+        if (getContext() != null) {
 
             if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                     ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -1243,7 +1347,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
         }
 
 
-
         gMap.setMyLocationEnabled(true);
 
         gMap.getUiSettings().setMyLocationButtonEnabled(true);
@@ -1253,8 +1356,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
         // 마커 타이틀 오버레이
         floatingMarkersOverlay = layout.findViewById(R.id.map_floating_markers_overlay);
         floatingMarkersOverlay.setSource(googleMap);
-
-
 
 
         View locationButton = ((View) layout.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
@@ -1285,7 +1386,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
             public boolean onMarkerClick(@NonNull Marker marker) {
 
                 if (!marker.getTag().equals("pointedMarker") && !marker.getTag().equals("directPinMarker")
-                && !marker.getTag().equals("startMarker") && !marker.getTag().equals("endMarker")) {
+                        && !marker.getTag().equals("startMarker") && !marker.getTag().equals("endMarker")) {
 
                     setMapFragmentMode(DETAIL_MODE, autoCompleteTextView_search_wrapper, mapSlidingLayout, map_frag_detail_box_wrapper,
                             map_frag_navi_searchWrapper, navi_button_wrapper, AR_button_wrapper);
@@ -1316,10 +1417,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
 
         gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.37532099190484, 126.63285407077159), 17));
         //gMap.setBuildingsEnabled(false);
-        if(getContext()!=null){
+        if (getContext() != null) {
             gMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getContext(), R.raw.map_style));
         }
-
 
 
         //----------------------------------------------------------
@@ -1393,7 +1493,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
 
         Activity activity = getActivity();
 
-        if(activity != null && isAdded()){
+        if (activity != null && isAdded()) {
             requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
         }
 
@@ -1402,29 +1502,29 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
             @Override
             public void onMapLongClick(@NonNull LatLng latLng) {
 
-                if(mapFragmentState == DEFAULT_MODE){
+                if (mapFragmentState == DEFAULT_MODE) {
 
-                     setMapFragmentMode(DIRECTPIN_MODE, autoCompleteTextView_search_wrapper, mapSlidingLayout, map_frag_detail_box_wrapper,
-                        map_frag_navi_searchWrapper, navi_button_wrapper, AR_button_wrapper);
+                    setMapFragmentMode(DIRECTPIN_MODE, autoCompleteTextView_search_wrapper, mapSlidingLayout, map_frag_detail_box_wrapper,
+                            map_frag_navi_searchWrapper, navi_button_wrapper, AR_button_wrapper);
 
-                map_frag_detail_title.setText("직접 위치 지정");
-                map_frag_detail_sort.setText("");
-                map_frag_detail_distance.setText("");
-                map_frag_detail_image.setImageResource(0);
+                    map_frag_detail_title.setText("직접 위치 지정");
+                    map_frag_detail_sort.setText("");
+                    map_frag_detail_distance.setText("");
+                    map_frag_detail_image.setImageResource(0);
 
-                Place directPickPlace = new Place("LOCATION", "직접 선택한 위치", "", 0, latLng, "", "");
+                    Place directPickPlace = new Place("LOCATION", "직접 선택한 위치", "", 0, latLng, "", "");
 
-                detailFocusedPlace = directPickPlace;
+                    detailFocusedPlace = directPickPlace;
 
-                if (pointedMarker != null) {
-                    pointedMarker.remove();
-                    pointedMarker = null;
-                }
+                    if (pointedMarker != null) {
+                        pointedMarker.remove();
+                        pointedMarker = null;
+                    }
 
-                Marker marker = gMap.addMarker(new MarkerOptions().position(latLng).icon(bitmapDescriptorFromVector(getActivity(), R.drawable.ic_inumarker_default)));
-                marker.setTag("directPinMarker");
+                    Marker marker = gMap.addMarker(new MarkerOptions().position(latLng).icon(bitmapDescriptorFromVector(getActivity(), R.drawable.ic_inumarker_default)));
+                    marker.setTag("directPinMarker");
 
-                gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,gMap.getCameraPosition().zoom));
+                    gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, gMap.getCameraPosition().zoom));
 
 
                 }
@@ -1434,8 +1534,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
         });
 
 
-
-        gMap.setPadding(0,DpToPixel(108),0,0);
+        gMap.setPadding(0, DpToPixel(108), 0, 0);
 
     }
 
@@ -1464,8 +1563,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
 
             case DEFAULT_MODE:
 
-                if(gMap != null)
-                    gMap.setPadding(0,DpToPixel(108),0,0);
+                if (gMap != null)
+                    gMap.setPadding(0, DpToPixel(108), 0, 0);
 
                 mapFragmentState = DEFAULT_MODE;
 
@@ -1488,8 +1587,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
 
             case SEARCH_MODE:
 
-                if(gMap != null)
-                    gMap.setPadding(0,DpToPixel(66), 0, DpToPixel(300));
+                if (gMap != null)
+                    gMap.setPadding(0, DpToPixel(66), 0, DpToPixel(300));
 
                 mapFragmentState = SEARCH_MODE;
                 searchBar.setVisibility(View.VISIBLE);
@@ -1504,15 +1603,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
                 searchKeywordRecyclerView.setVisibility(View.INVISIBLE);
 
 
-
                 break;
 
             case DIRECTPIN_MODE:
 
                 mapFragmentState = DIRECTPIN_MODE;
 
-                if(gMap != null)
-                    gMap.setPadding(0,DpToPixel(66), 0, DpToPixel(180));
+                if (gMap != null)
+                    gMap.setPadding(0, DpToPixel(66), 0, DpToPixel(180));
 
 
                 searchBar.setVisibility(View.VISIBLE);
@@ -1538,13 +1636,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
 
                 break;
 
-            case DETAIL_MODE :
+            case DETAIL_MODE:
 
                 mapFragmentState = DETAIL_MODE;
                 searchBar.setVisibility(View.VISIBLE);
 
-                if(gMap != null)
-                    gMap.setPadding(0,DpToPixel(66), 0, DpToPixel(180));
+                if (gMap != null)
+                    gMap.setPadding(0, DpToPixel(66), 0, DpToPixel(180));
 
                 map_frag_detail_box.setClickable(true);
                 map_frag_detail_box.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.layout_map_detail_box));
@@ -1567,13 +1665,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
                 break;
 
 
-            case DIRECTION_MODE :
+            case DIRECTION_MODE:
 
                 mapFragmentState = DIRECTION_MODE;
 
-                if(gMap != null)
+                if (gMap != null)
                     //Map.setPadding(0,DpToPixel(170), 0, DpToPixel(140));
-                    gMap.setPadding(0,DpToPixel(182), 0, DpToPixel(0));
+                    gMap.setPadding(0, DpToPixel(182), 0, DpToPixel(0));
 
 
                 map_frag_navi_searchBar_Start.setText("");
@@ -1614,7 +1712,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
     //dp에서 픽셀로 변환하는 메소드
     public int DpToPixel(int dp) {
 
-        try{
+        try {
             Resources r = getContext().getResources();
 
             int px = (int) TypedValue.applyDimension(
@@ -1625,7 +1723,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
 
             return px;
 
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 
@@ -1640,12 +1738,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
         Toast.makeText(getContext(), "경로 찾기 시작", Toast.LENGTH_SHORT).show();
 
 
-        if(gMap != null)
-            gMap.setPadding(0,DpToPixel(182), 0, DpToPixel(140));
+        if (gMap != null)
+            gMap.setPadding(0, DpToPixel(182), 0, DpToPixel(140));
 
         latLngList.clear();
 
-        if(gMap != null)
+        if (gMap != null)
             gMap.clear();
 
         GetRootBackgroundTask(naviInfo);
@@ -1666,7 +1764,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
 
 
     }
-
 
 
     // 슬라이딩 패널에서 길찾기 버튼을 눌렀을 때 길찾기로 넘어가는 함수
@@ -1691,36 +1788,70 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
             @Override
             public void onSuccess(Location location) {
 
-                startLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                if (location != null) {
 
-                startPlaceCode = "LOCATION";
+                    startLocation = new LatLng(location.getLatitude(), location.getLongitude());
 
-                endPlaceCode = place.getPlaceCode();
-                endLocation = place.getLocation();
+                    startPlaceCode = "LOCATION";
 
-                String endPlaceTitle = place.getTitle();
-                map_frag_navi_searchBar_End.setText(endPlaceTitle);
+                    endPlaceCode = place.getPlaceCode();
+                    endLocation = place.getLocation();
 
-                setStartMarker(startLocation);
-                setEndMarker(endLocation);
+                    String endPlaceTitle = place.getTitle();
+                    map_frag_navi_searchBar_End.setText(endPlaceTitle);
 
-                if (!map_frag_navi_searchBar_Start.getText().toString().equals("") &&
-                        !(map_frag_navi_searchBar_End.getText().toString().equals(""))) {
+                    setStartMarker(startLocation);
+                    setEndMarker(endLocation);
 
-                    NaviInfo naviInfo = new NaviInfo(startPlaceCode, endPlaceCode, startLocation, endLocation);
-                    showBriefingDirection(naviInfo);
+                    if (!map_frag_navi_searchBar_Start.getText().toString().equals("") &&
+                            !(map_frag_navi_searchBar_End.getText().toString().equals(""))) {
+
+                        NaviInfo naviInfo = new NaviInfo(startPlaceCode, endPlaceCode, startLocation, endLocation);
+                        showBriefingDirection(naviInfo);
+
+                    }
+
+                }else{
+
+                    LocationRequest mRequest = LocationRequest.create()
+                            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                            .setInterval(800)
+                            .setFastestInterval(500);
+
+                    LocationCallback mLocationCallback = new LocationCallback() {
+                        @Override
+                        public void onLocationResult(@NonNull LocationResult locationResult) {
+                            super.onLocationResult(locationResult);
+
+                            if (locationResult == null)
+                                return;
+
+                            for (Location location : locationResult.getLocations()) {
+                                LatLng mLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                                fusedLocationClient.removeLocationUpdates(this);
+                            }
+
+                        }
+                    };
+
+                    if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                        return;
+                    }
+
+                    fusedLocationClient.requestLocationUpdates(mRequest, mLocationCallback, null);
 
                 }
+
 
             }
         });
 
 
-
     }
 
     // 특정 장소가 선택된 상태에서 출발 버튼을 눌렀을 때 길안내를 하는 함수 (여기서는 도착이 알아서 지정되지 않음)
-    public void setFindRouteFromPlace(Place place){
+    public void setFindRouteFromPlace(Place place) {
 
         setMapFragmentMode(DIRECTION_MODE, autoCompleteTextView_search_wrapper, mapSlidingLayout, map_frag_detail_box_wrapper,
                 map_frag_navi_searchWrapper, navi_button_wrapper, AR_button_wrapper);
@@ -1750,9 +1881,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
     }
 
 
-
     // 특정 장소가 선택된 상태에서 도착 버튼을 눌렀을 때 길안내를 하는 함수 (여기서는 출발은 내위치로 알아서 지정됨)
-    public void setFindRouteToPlace(Place place){
+    public void setFindRouteToPlace(Place place) {
 
         setMapFragmentMode(DIRECTION_MODE, autoCompleteTextView_search_wrapper, mapSlidingLayout, map_frag_detail_box_wrapper,
                 map_frag_navi_searchWrapper, navi_button_wrapper, AR_button_wrapper);
@@ -1773,28 +1903,64 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
             @Override
             public void onSuccess(Location location) {
 
-                startLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                if (location != null) {
 
-                startPlaceCode = "LOCATION";
+                    startLocation = new LatLng(location.getLatitude(), location.getLongitude());
 
-
-                endPlaceCode = place.getPlaceCode();
-                endLocation = place.getLocation();
-
-                String endPlaceTitle = place.getTitle();
-                map_frag_navi_searchBar_End.setText(endPlaceTitle);
-
-                setStartMarker(startLocation);
-                setEndMarker(endLocation);
+                    startPlaceCode = "LOCATION";
 
 
-                if (!map_frag_navi_searchBar_Start.getText().toString().equals("") &&
-                        !(map_frag_navi_searchBar_End.getText().toString().equals(""))) {
+                    endPlaceCode = place.getPlaceCode();
+                    endLocation = place.getLocation();
 
-                    NaviInfo naviInfo = new NaviInfo(startPlaceCode, endPlaceCode, startLocation, endLocation);
-                    showBriefingDirection(naviInfo);
+                    String endPlaceTitle = place.getTitle();
+                    map_frag_navi_searchBar_End.setText(endPlaceTitle);
+
+                    setStartMarker(startLocation);
+                    setEndMarker(endLocation);
+
+
+                    if (!map_frag_navi_searchBar_Start.getText().toString().equals("") &&
+                            !(map_frag_navi_searchBar_End.getText().toString().equals(""))) {
+
+                        NaviInfo naviInfo = new NaviInfo(startPlaceCode, endPlaceCode, startLocation, endLocation);
+                        showBriefingDirection(naviInfo);
+
+                    }
+
+                } else {
+
+                    LocationRequest mRequest = LocationRequest.create()
+                            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                            .setInterval(800)
+                            .setFastestInterval(500);
+
+                    LocationCallback mLocationCallback = new LocationCallback() {
+                        @Override
+                        public void onLocationResult(@NonNull LocationResult locationResult) {
+                            super.onLocationResult(locationResult);
+
+                            if (locationResult == null)
+                                return;
+
+                            for (Location location : locationResult.getLocations()) {
+                                LatLng mLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                                fusedLocationClient.removeLocationUpdates(this);
+                            }
+
+                        }
+                    };
+
+                    if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                        return;
+                    }
+
+                    fusedLocationClient.requestLocationUpdates(mRequest, mLocationCallback, null);
 
                 }
+
+
 
             }
         });
@@ -1864,8 +2030,40 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
                     @Override
                     public void onSuccess(Location location) {
 
-                        myCurrentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                        SearchBackgroundTask();
+                        if(location != null){
+                            myCurrentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                            SearchBackgroundTask();
+                        }else{
+
+                            LocationRequest mRequest = LocationRequest.create()
+                                    .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                                    .setInterval(800)
+                                    .setFastestInterval(500);
+
+                            LocationCallback mLocationCallback = new LocationCallback() {
+                                @Override
+                                public void onLocationResult(@NonNull LocationResult locationResult) {
+                                    super.onLocationResult(locationResult);
+
+                                    if (locationResult == null)
+                                        return;
+
+                                    for (Location location : locationResult.getLocations()) {
+                                        LatLng mLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                                        fusedLocationClient.removeLocationUpdates(this);
+                                    }
+
+                                }
+                            };
+
+                            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                                return;
+                            }
+
+                            fusedLocationClient.requestLocationUpdates(mRequest, mLocationCallback, null);
+
+                        }
 
                     }
 
@@ -2222,12 +2420,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
                                 @Override
                                 public void onSuccess(Location location) {
 
-                                    JSONObject resultObj = new JSONObject();
+                                    if(location != null){
+                                        JSONObject resultObj = new JSONObject();
 
-                                    try {
-                                        resultObj.put("route", route);
-                                        resultObj.put("location", location.getLatitude() + ", " + location.getLongitude());
-                                        resultObj.put("angle", azimuth);
+                                        try {
+                                            resultObj.put("route", route);
+                                            resultObj.put("location", location.getLatitude() + ", " + location.getLongitude());
+                                            resultObj.put("angle", azimuth);
 
 
 
@@ -2235,7 +2434,38 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
                                         startActivity(intent);*/
 
 
-                                    } catch (JSONException e) {
+                                        } catch (JSONException e) {
+                                        }
+                                    }else{
+
+                                        LocationRequest mRequest = LocationRequest.create()
+                                                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                                                .setInterval(800)
+                                                .setFastestInterval(500);
+
+                                        LocationCallback mLocationCallback = new LocationCallback() {
+                                            @Override
+                                            public void onLocationResult(@NonNull LocationResult locationResult) {
+                                                super.onLocationResult(locationResult);
+
+                                                if (locationResult == null)
+                                                    return;
+
+                                                for (Location location : locationResult.getLocations()) {
+                                                    LatLng mLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                                                    fusedLocationClient.removeLocationUpdates(this);
+                                                }
+
+                                            }
+                                        };
+
+                                        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                                            return;
+                                        }
+
+                                        fusedLocationClient.requestLocationUpdates(mRequest, mLocationCallback, null);
+
                                     }
 
                                 }

@@ -318,6 +318,7 @@ public class SearchActivity extends AppCompatActivity {
                 String classtime;
                 String how;
                 String point;
+                String realTime;
 
                 while(count < jsonArray.length()){
                     JSONObject object = jsonArray.getJSONObject(count);
@@ -335,6 +336,7 @@ public class SearchActivity extends AppCompatActivity {
                     classtime = object.getString("classtime");
                     how = object.getString("how");
                     point = object.getString("point");
+                    realTime = object.getString("realTime");
 
                     lecturename = lecturename.replaceAll("\"", "");
                     classtime_raw = classtime_raw.trim();
@@ -342,10 +344,14 @@ public class SearchActivity extends AppCompatActivity {
                     classtime_raw = classtime_raw.replaceAll(" ", "");
                     classtime_raw = classtime_raw.replace("[", "");
                     classtime_raw = classtime_raw.replaceAll("]", "");
+                    realTime = realTime.replaceAll("\"", "");
+
+                    classroom_raw = classroom_raw.trim();
+                    classroom_raw = classroom_raw.replaceAll("\"", "");
 
 
                     Lecture lecture = new Lecture(id, department, grade, category, number, lecturename,
-                            professor, classroom_raw, classtime_raw, classroom, classtime, how, Integer.parseInt(point));
+                            professor, classroom_raw, classtime_raw, classroom, classtime, how, Integer.parseInt(point), realTime);
                     lectureList.add(lecture);
                     count++;
 

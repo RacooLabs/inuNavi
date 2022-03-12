@@ -16,10 +16,12 @@ public class Lecture {
     String how;
     int point;
 
+
     String color;
+    String realTime;
 
 
-    public Lecture(int id, String department, String grade, String category, String number, String lecturename, String professor, String classroom_raw, String classtime_raw, String classroom, String classtime, String how, int point) {
+    public Lecture(int id, String department, String grade, String category, String number, String lecturename, String professor, String classroom_raw, String classtime_raw, String classroom, String classtime, String how, int point, String realTime) {
         this.id = id;
         this.department = department;
         this.grade = grade;
@@ -33,6 +35,7 @@ public class Lecture {
         this.classtime = classtime;
         this.how = how;
         this.point = point;
+        this.realTime = realTime;
     }
 
 
@@ -147,4 +150,8 @@ public class Lecture {
     public void setColor(String color) {
         this.color = color;
     }
+
+    public void setRealTime(String realTime) {this.realTime = realTime;}
+
+    public String getRealTime() { return realTime;}
 }
