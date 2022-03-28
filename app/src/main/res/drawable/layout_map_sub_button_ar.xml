@@ -5,7 +5,7 @@
     <item android:state_pressed="true">
         <shape android:shape="oval">
             <corners android:radius="12dp"/>
-            <solid android:color="#F2F2F2"/>
+            <solid android:color="#4E0165"/>
 
         </shape>
 
@@ -15,7 +15,7 @@
         <shape android:shape="oval">
 
             <corners android:radius="12dp"/>
-            <solid android:color="@color/main_button_disable_color"/>
+            <solid android:color="#F3CDFE"/>
 
         </shape>
 
@@ -27,7 +27,7 @@
         <shape android:shape="oval">
 
             <corners android:radius="12dp"/>
-            <solid android:color="#ffffff"/>
+            <solid android:color="#6C028C"/>
 
         </shape>
 

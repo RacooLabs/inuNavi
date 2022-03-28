@@ -4,4 +4,6 @@
     <string name="title_satisfied">분석</string>
     <string name="title_timetable">시간표</string>
     <string name="title_recommend">추천</string>
+
+    <string name="game_view_content_description">Game view</string>
 </resources>

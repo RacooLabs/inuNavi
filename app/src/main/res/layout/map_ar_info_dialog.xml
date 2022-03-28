@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+
+        android:id="@+id/ar_guide_title"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="AR 기능 시작"
+        android:textColor="@color/ar_purple"
+        android:textSize="24dp"
+        android:padding="12dp"
+
+        />
+
+    <ImageView
+        android:id="@+id/ar_guide_image"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:src="@drawable/ar_guide_img"
+        app:layout_constraintTop_toBottomOf="@id/ar_guide_title"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_margin="12dp"/>
+
+    <TextView
+
+        android:id="@+id/ar_guide_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1.  방향을 보정하기 위해 위와 같이 스마트폰 회전을 3번 이상 반복하세요.\n\n2.  AR 이 켜지면 스마트폰을 정면에 고정하세요."
+        android:textColor="@color/main_text_color"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@id/ar_guide_image"
+        android:layout_margin="12dp"
+        android:padding="24dp"
+
+        />
+
+    <TextView
+        android:id="@+id/ar_guide_check_button"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/editText_height"
+        android:background="@drawable/layout_ar_check_button"
+        android:text="확인"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="@dimen/main_text_size"
+        android:clickable="true"
+        app:layout_constraintTop_toBottomOf="@id/ar_guide_text"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:textStyle="bold"
+
+        />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

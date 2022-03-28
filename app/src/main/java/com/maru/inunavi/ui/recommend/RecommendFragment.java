@@ -115,7 +115,9 @@ public class RecommendFragment extends Fragment {
 
                             }
 
-                            //RecommendBackgroundTask();
+                            // 정보 초기화
+
+                            RecommendBackgroundTask();
 
                         }
                     }

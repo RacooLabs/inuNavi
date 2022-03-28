@@ -3,6 +3,7 @@
     package="com.maru.inunavi">
 
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -236,6 +237,28 @@
             android:screenOrientation="portrait">
 
         </activity>
+
+        <activity
+            android:name="com.maru.inunavi.ui.map.ARActivity"
+            android:exported="true"
+            android:hardwareAccelerated="true"
+            android:screenOrientation="portrait"
+
+            android:process=".UnityPreviewActivity">
+
+            <meta-data android:name="unityplayer.UnityActivity" android:value="true" />
+            <meta-data android:name="unityplayer.ForwardNativeEventsToDalvik" android:value="false" />
+
+        </activity>
+
+        <activity
+            android:name="com.unity3d.player.UnityPlayerActivity"
+            android:exported="true"
+
+            >
+
+        </activity>
+
 
 
 

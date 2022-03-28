@@ -253,6 +253,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
     private Sensor m_ot_sensor;
     private double azimuth;
 
+    private CustomARDialog dlg;
+
 
     public MapFragment() {
 
@@ -2291,6 +2293,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
 
     }
 
+    ActivityResultLauncher<Intent> arResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent intent = result.getData();
+                        int CallType = intent.getIntExtra("CallType", 0);
+                        switch (CallType) {
+                            case 1001:
+                                break;
+                        }
+                    }
+                }
+            });
+
 
     // 경로 가져오는 서버 통신 코드
     Disposable getRouteBackgroundTask;
@@ -2405,74 +2423,99 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
 
                     map_frag_navi_detail_box_wrapper.setVisibility(View.VISIBLE);
 
-                    //AR_button_wrapper.setVisibility(View.VISIBLE);
+                    AR_button_wrapper.setVisibility(View.VISIBLE);
 
                     AR_button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
 
-                            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-                                return;
-                            }
-
-                            fusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                            dlg = new CustomARDialog(getContext(), new View.OnClickListener() {
                                 @Override
-                                public void onSuccess(Location location) {
+                                public void onClick(View view) {
 
-                                    if(location != null){
-                                        JSONObject resultObj = new JSONObject();
-
-                                        try {
-                                            resultObj.put("route", route);
-                                            resultObj.put("location", location.getLatitude() + ", " + location.getLongitude());
-                                            resultObj.put("angle", azimuth);
+                                    if(dlg!=null){
+                                        dlg.dismiss();
+                                    }
 
 
+                                    if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-                                        /*Intent intent = new Intent(getActivity(), UnityPlayerActivity.class);
-                                        startActivity(intent);*/
+                                        return;
+
+                                    }
 
 
-                                        } catch (JSONException e) {
-                                        }
-                                    }else{
 
-                                        LocationRequest mRequest = LocationRequest.create()
-                                                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                                                .setInterval(800)
-                                                .setFastestInterval(500);
+                                    fusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                                        @Override
+                                        public void onSuccess(Location location) {
 
-                                        LocationCallback mLocationCallback = new LocationCallback() {
+                                            if(location != null){
+                                                JSONObject resultObj = new JSONObject();
+
+                                                try {
+                                                    resultObj.put("route", route);
+
+                                                    Intent intent = new Intent(getActivity(), ARActivity.class);
+                                                    intent.putExtra("arJson", resultObj.toString());
+                                                    arResultLauncher.launch(intent);
+
+                                        /*
+                                        final Handler handler = new Handler(){
                                             @Override
-                                            public void onLocationResult(@NonNull LocationResult locationResult) {
-                                                super.onLocationResult(locationResult);
+                                            public void handleMessage(Message msg) {
 
-                                                if (locationResult == null)
-                                                    return;
-
-                                                for (Location location : locationResult.getLocations()) {
-                                                    LatLng mLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-                                                    fusedLocationClient.removeLocationUpdates(this);
-                                                }
+                                                String json = resultObj.toString();
+                                                UnityPlayer.UnitySendMessage("GameObject", "dataRecept", json);
 
                                             }
                                         };
 
-                                        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                        handler.sendEmptyMessageDelayed(0,6000);
+                                        */
 
-                                            return;
+                                                } catch (JSONException e) {
+                                                }
+                                            }else{
+
+                                                LocationRequest mRequest = LocationRequest.create()
+                                                        .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                                                        .setInterval(800)
+                                                        .setFastestInterval(500);
+
+                                                LocationCallback mLocationCallback = new LocationCallback() {
+                                                    @Override
+                                                    public void onLocationResult(@NonNull LocationResult locationResult) {
+                                                        super.onLocationResult(locationResult);
+
+                                                        if (locationResult == null)
+                                                            return;
+
+                                                        for (Location location : locationResult.getLocations()) {
+                                                            LatLng mLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                                                            fusedLocationClient.removeLocationUpdates(this);
+                                                        }
+
+                                                    }
+                                                };
+
+                                                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                                                    return;
+                                                }
+
+                                                fusedLocationClient.requestLocationUpdates(mRequest, mLocationCallback, null);
+
+                                            }
+
                                         }
+                                    });
 
-                                        fusedLocationClient.requestLocationUpdates(mRequest, mLocationCallback, null);
-
-                                    }
 
                                 }
                             });
 
-
-
+                            dlg.show();
 
                         }
                     });
