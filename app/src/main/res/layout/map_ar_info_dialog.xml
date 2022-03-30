@@ -15,6 +15,7 @@
         android:textColor="@color/ar_purple"
         android:textSize="24dp"
         android:padding="12dp"
+        android:layout_marginLeft="6dp"
 
         />
 
@@ -33,14 +34,30 @@
         android:id="@+id/ar_guide_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="1.  방향을 보정하기 위해 위와 같이 스마트폰 회전을 3번 이상 반복하세요.\n\n2.  AR 이 켜지면 스마트폰을 정면에 고정하세요."
+        android:text="1.  방향을 보정하기 위해 위와 같이 스마트폰 회전을 3번 이상 반복하세요.\n\n2.  AR이 켜지면 스마트폰을 정면에 고정하세요."
         android:textColor="@color/main_text_color"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-
+        android:textSize="@dimen/main_text_size"
         app:layout_constraintTop_toBottomOf="@id/ar_guide_image"
-        android:layout_margin="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
         android:padding="24dp"
+
+        />
+
+    <TextView
+
+        android:id="@+id/ar_guide_text_sub"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="위치와 날씨에 따라 오차가 발생할 수 있습니다."
+        android:textColor="@color/main_text_color"
+        android:textSize="10sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ar_guide_text"
+
 
         />
 
@@ -54,7 +71,7 @@
         android:textColor="@color/white"
         android:textSize="@dimen/main_text_size"
         android:clickable="true"
-        app:layout_constraintTop_toBottomOf="@id/ar_guide_text"
+        app:layout_constraintTop_toBottomOf="@id/ar_guide_text_sub"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

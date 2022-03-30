@@ -569,7 +569,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/main_text_size"
                     android:textColor="@color/main_text_color"
-                    android:text="  |  "
+                    android:text="  ·  "
                     app:layout_constraintLeft_toRightOf="@id/map_frag_navi_detail_distance"
                     app:layout_constraintBottom_toBottomOf="@id/map_frag_navi_detail_distance"
                     app:layout_constraintTop_toTopOf="@id/map_frag_navi_detail_distance"/>
