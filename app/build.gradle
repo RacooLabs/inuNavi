@@ -9,7 +9,7 @@ android {
         applicationId "com.maru.inunavi"
         minSdk 26
         targetSdk 31
-        versionCode 5
+        versionCode 6
         versionName "1.1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
