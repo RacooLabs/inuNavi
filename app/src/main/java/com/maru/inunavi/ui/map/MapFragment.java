@@ -32,6 +32,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.telecom.Call;
 import android.util.Log;
 import android.util.TypedValue;
@@ -502,6 +503,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
         });
 
         // 디테일 박스 리스너 설정
+
 
         ActivityResultLauncher<Intent> detailActivityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -2191,8 +2193,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
 
             try {
 
-
-
                 placeList.clear();
 
                 JSONObject jsonObject = new JSONObject(result);
@@ -2284,6 +2284,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
                 }
 
             } catch (Exception e) {
+
+
 
             }
 
@@ -2535,137 +2537,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
     }
 
 
-    // 다음 시간의 강의 장소 코드와 좌표를 가져오는 서버 통신 코드
-    /*Disposable getNextPlaceBackgroundTask;
-
-    void GetNextPlaceBackgroundTask() {
-
-        getNextPlaceBackgroundTask = Observable.fromCallable(() -> {
-
-            // doInBackground
-
-
-            String target = (IpAddress.isTest ? "http://"+ DemoIP_ClientTest +"/inuNavi/GetNextPlace.php" :
-                    "http://" + DemoIP + "/selectLecture")+ "?userEmail=\"" + MainActivity.cookieManager.getCookie(url).replace("cookieKey=", "") + "\"";
-
-
-            try {
-                URL url = new URL(target);
-                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                InputStream inputStream = httpURLConnection.getInputStream();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                String temp;
-                StringBuilder stringBuilder = new StringBuilder();
-                while ((temp = bufferedReader.readLine()) != null) {
-                    stringBuilder.append(temp + "\n");
-                }
-
-                bufferedReader.close();
-                inputStream.close();
-                httpURLConnection.disconnect();
-                return stringBuilder.toString().trim();
-
-            } catch (Exception e) {
-
-            }
-
-            return null;
-
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).onErrorReturn(___ -> "{response : []}").subscribe((result) -> {
-
-            // onPostExecute
-
-            try {
-
-
-
-                JSONObject jsonObject = new JSONObject(result);
-                JSONArray jsonArray = jsonObject.getJSONArray("response");
-
-
-                String nextPlaceCode="";
-                String nextPlaceLocationString="";
-                String nextPlaceTitle="";
-                LatLng nextPlaceLocation = null;
-
-                int count = 0;
-
-                while (count < jsonArray.length()) {
-                    JSONObject object = jsonArray.getJSONObject(count);
-
-                    nextPlaceCode = object.getString("nextPlaceCode");
-                    nextPlaceLocationString = object.getString("nextPlaceLocationString");
-                    nextPlaceTitle = object.getString("nextPlaceTitle");
-
-                    count++;
-
-                }
-
-                if(count == 0){
-
-                    AlertDialog.Builder msgBuilder = new AlertDialog.Builder(getContext())
-                            .setTitle("알림")
-                            .setMessage("다음 강의 정보가 없습니다.")
-                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-
-                                }
-                            });
-
-                    AlertDialog msgDlg = msgBuilder.create(); msgDlg.show();
-
-                }else {
-
-                    String[] locationSplit = nextPlaceLocationString.split(",");
-
-                    if(locationSplit.length == 2){
-                        nextPlaceLocation = new LatLng(Double.parseDouble(locationSplit[0]),
-                                Double.parseDouble(locationSplit[1]));
-                    }
-
-                    map_frag_navi_searchBar_Start.setText("내 위치");
-                    map_frag_navi_searchBar_End.setText(nextPlaceTitle);
-
-                    endPlaceCode = nextPlaceCode;
-
-                    if(nextPlaceLocation != null){
-                        endLocation = nextPlaceLocation;
-                    }
-
-                    if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-                        return;
-                    }
-
-                    fusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-
-                            startLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                            startPlaceCode = "LOCATION";
-
-                            // 경로 그리는 메소드
-                            if (startLocation != null && endLocation!=null && isLogin) {
-
-                                NaviInfo naviInfo = new NaviInfo(startPlaceCode, endPlaceCode, startLocation, endLocation);
-                                showBriefingDirection(naviInfo);
-
-                            }
-                        }
-                    });
-
-                }
-
-            } catch (Exception e) {
-
-            }
-
-            getNextPlaceBackgroundTask.dispose();
-
-        });
-
-    }*/
 
     public void onAccuracyChanged(Sensor sensor, int accuracy)
     {
@@ -2686,5 +2557,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
         }
 
     }
+
+
 
 }

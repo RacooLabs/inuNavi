@@ -40,9 +40,9 @@ public class FindImage {
 
                 break;
 
-            case "FOODGYO" :
+            case "FOODDUP" :
 
-                mainImageId = R.drawable.place_foodgyo_main;
+                mainImageId = R.drawable.place_fooddup_main;
 
                 break;
 
@@ -70,6 +70,12 @@ public class FindImage {
 
                 break;
 
+            case "FOODSTU1" :
+
+                mainImageId = R.drawable.place_foodstu1_main;
+
+                break;
+
             case "FOODSTU2" :
 
                 mainImageId = R.drawable.place_foodstu2_main;
@@ -82,11 +88,6 @@ public class FindImage {
 
                 break;
 
-            case "FOODBUN" :
-
-                mainImageId = R.drawable.place_foodbun_main;
-
-                break;
 
             case "FOODPAL" :
 
@@ -100,9 +101,6 @@ public class FindImage {
 
                 break;
 
-            case "FOOD27":
-                mainImageId = R.drawable.place_food27_main;
-                break;
 
             //편의점
 
@@ -154,6 +152,11 @@ public class FindImage {
 
                 break;
 
+            case "CONGSSTU1" :
+
+                mainImageId = R.drawable.place_congsstu1_mini;
+
+                break;
 
 
 
@@ -338,6 +341,18 @@ public class FindImage {
             case "FACMEDIC":
 
                 mainImageId = R.drawable.place_facmedic_mini;
+
+                break;
+
+            case "FACDREAM":
+
+                mainImageId = R.drawable.place_facdream_mini;
+
+                break;
+
+            case "FACPACK":
+
+                mainImageId = R.drawable.place_facpack_mini;
 
                 break;
 
