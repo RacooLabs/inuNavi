@@ -30,6 +30,7 @@ public class ARActivity extends AppCompatActivity {
     public static Context mContext;
     protected UnityPlayer mUnityPlayer;
     private String arJson = "";
+    private String type = "";
     private ImageView ar_back;
 
     @Override
@@ -39,7 +40,9 @@ public class ARActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         if(intent != null){
+
             arJson = intent.getStringExtra("arJson");
+            type = intent.getStringExtra("type");
         }
 
         /*mUnityPlayer = new UnityPlayer(this);
@@ -98,7 +101,12 @@ public class ARActivity extends AppCompatActivity {
             @Override
             public void handleMessage(Message msg) {
 
-                mUnityPlayer.UnitySendMessage("GameObject", "dataRecept", arJson);
+                if(type.equals("route")){
+                    mUnityPlayer.UnitySendMessage("GameObject", "dataRecept", arJson);
+                }else if(type.equals("marker")){
+                    mUnityPlayer.UnitySendMessage("GameObject", "dataRecept2", arJson);
+                }
+
 
             }
         };

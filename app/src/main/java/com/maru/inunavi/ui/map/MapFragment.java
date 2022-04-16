@@ -2037,6 +2037,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
                         if(location != null){
                             myCurrentLocation = new LatLng(location.getLatitude(), location.getLongitude());
                             SearchBackgroundTask();
+
+
+
+
+
                         }else{
 
                             LocationRequest mRequest = LocationRequest.create()
@@ -2161,6 +2166,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
             String target = (IpAddress.isTest ? "http://"+ DemoIP_ClientTest +"/inuNavi/PlaceSearchList.php" :
                     "http://" + DemoIP + "/placeSearchList")+ "?searchKeyword=\"" + searchKeyword + "\"&myLocation=\"" + myLocation + "\"";
 
+
+
             try {
                 URL url = new URL(target);
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -2280,6 +2287,131 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
                     }
 
                     gMap.setPadding(0,DpToPixel(66), 0, 0);
+
+                }
+
+                if(placeList.size() > 0){
+
+                    //AR 마커 표시
+                    AR_button_wrapper.setVisibility(View.VISIBLE);
+
+                    AR_button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            dlg = new CustomARDialog(getContext(), new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                    if(dlg!=null){
+                                        dlg.dismiss();
+                                    }
+
+
+                                    if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                                        return;
+
+                                    }
+
+
+
+                                    fusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                                        @Override
+                                        public void onSuccess(Location location) {
+
+                                            if(location != null){
+
+                                                StringBuilder arSb = new StringBuilder();
+
+                                                for(int i=0; i<placeList.size()-1; i++){
+
+                                                    arSb.append(placeList.get(i).getTitle());
+                                                    arSb.append(",");
+                                                    arSb.append(placeList.get(i).getLocation().latitude);
+                                                    arSb.append(",");
+                                                    arSb.append(placeList.get(i).getLocation().longitude);
+                                                    arSb.append(",");
+
+                                                }
+
+                                                arSb.append(placeList.get(placeList.size()-1).getTitle());
+                                                arSb.append(",");
+                                                arSb.append(placeList.get(placeList.size()-1).getLocation().latitude);
+                                                arSb.append(",");
+                                                arSb.append(placeList.get(placeList.size()-1).getLocation().longitude);
+
+
+                                                Intent intent = new Intent(getActivity(), ARActivity.class);
+
+                                                intent.putExtra("type", "marker");
+                                                intent.putExtra("arJson", arSb.toString());
+
+                                                Log.d("test2098",arSb.toString());
+                                                arResultLauncher.launch(intent);
+
+
+                                        /*
+                                        final Handler handler = new Handler(){
+                                            @Override
+                                            public void handleMessage(Message msg) {
+
+                                                String json = resultObj.toString();
+                                                UnityPlayer.UnitySendMessage("GameObject", "dataRecept", json);
+
+                                            }
+                                        };
+
+                                        handler.sendEmptyMessageDelayed(0,6000);
+                                        */
+
+                                            }else{
+
+                                                LocationRequest mRequest = LocationRequest.create()
+                                                        .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                                                        .setInterval(800)
+                                                        .setFastestInterval(500);
+
+                                                LocationCallback mLocationCallback = new LocationCallback() {
+                                                    @Override
+                                                    public void onLocationResult(@NonNull LocationResult locationResult) {
+                                                        super.onLocationResult(locationResult);
+
+                                                        if (locationResult == null)
+                                                            return;
+
+                                                        for (Location location : locationResult.getLocations()) {
+                                                            LatLng mLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                                                            fusedLocationClient.removeLocationUpdates(this);
+                                                        }
+
+                                                    }
+                                                };
+
+                                                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                                                    return;
+                                                }
+
+                                                fusedLocationClient.requestLocationUpdates(mRequest, mLocationCallback, null);
+
+                                            }
+
+                                        }
+                                    });
+
+
+                                }
+                            });
+
+                            dlg.show();
+
+                        }
+                    });
+
+                }else{
+
+                    AR_button_wrapper.setVisibility(View.INVISIBLE);
 
                 }
 
@@ -2425,6 +2557,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
 
                     map_frag_navi_detail_box_wrapper.setVisibility(View.VISIBLE);
 
+                    
+                    //AR 경로 보기
                     AR_button_wrapper.setVisibility(View.VISIBLE);
 
                     AR_button.setOnClickListener(new View.OnClickListener() {
@@ -2459,7 +2593,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
                                                     resultObj.put("route", route);
 
                                                     Intent intent = new Intent(getActivity(), ARActivity.class);
+
                                                     intent.putExtra("arJson", resultObj.toString());
+                                                    intent.putExtra("type", "route");
                                                     arResultLauncher.launch(intent);
 
                                         /*
@@ -2477,6 +2613,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
                                         */
 
                                                 } catch (JSONException e) {
+
                                                 }
                                             }else{
 

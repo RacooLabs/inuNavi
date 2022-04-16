@@ -1,8 +1,5 @@
 package com.maru.inunavi.ui.map;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.widget.ImageView;
 
 import com.maru.inunavi.R;
 
