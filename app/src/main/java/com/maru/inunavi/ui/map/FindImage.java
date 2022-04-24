@@ -176,7 +176,7 @@ public class FindImage {
 
                 break;
 
-            case "CAFECT" :
+            case "CAFESNB" :
 
                 mainImageId = R.drawable.place_cafect_mini;
 

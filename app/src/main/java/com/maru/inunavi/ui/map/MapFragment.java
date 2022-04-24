@@ -1606,6 +1606,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
                 map_frag_navi_detail_box_wrapper.setVisibility(View.GONE);
                 searchKeywordRecyclerView.setVisibility(View.INVISIBLE);
 
+                AR_button_wrapper.setVisibility(View.VISIBLE);
 
                 break;
 
@@ -2347,7 +2348,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
                                                 intent.putExtra("type", "marker");
                                                 intent.putExtra("arJson", arSb.toString());
 
-                                                Log.d("test2098",arSb.toString());
+
                                                 arResultLauncher.launch(intent);
 
 
@@ -2411,7 +2412,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, SensorE
 
                 }else{
 
-                    AR_button_wrapper.setVisibility(View.INVISIBLE);
+                    AR_button_wrapper.setVisibility(View.GONE);
 
                 }
 

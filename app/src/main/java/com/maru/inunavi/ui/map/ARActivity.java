@@ -9,6 +9,7 @@ import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -103,7 +104,9 @@ public class ARActivity extends AppCompatActivity {
 
                 if(type.equals("route")){
                     mUnityPlayer.UnitySendMessage("GameObject", "dataRecept", arJson);
+
                 }else if(type.equals("marker")){
+                    Log.d("@@@" , arJson);
                     mUnityPlayer.UnitySendMessage("GameObject", "dataRecept2", arJson);
                 }
 
