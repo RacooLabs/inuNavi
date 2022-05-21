@@ -106,7 +106,7 @@ public class ARActivity extends AppCompatActivity {
                     mUnityPlayer.UnitySendMessage("GameObject", "dataRecept", arJson);
 
                 }else if(type.equals("marker")){
-                    Log.d("@@@" , arJson);
+
                     mUnityPlayer.UnitySendMessage("GameObject", "dataRecept2", arJson);
                 }
 
