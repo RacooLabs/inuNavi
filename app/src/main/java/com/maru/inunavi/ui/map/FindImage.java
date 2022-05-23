@@ -98,6 +98,10 @@ public class FindImage {
 
                 break;
 
+            case "FOODCHD":
+
+                mainImageId = R.drawable.place_foodchd_main;
+
 
             //편의점
 
@@ -154,6 +158,10 @@ public class FindImage {
                 mainImageId = R.drawable.place_congsstu1_mini;
 
                 break;
+
+            case "CONEMLIB":
+
+                mainImageId = R.drawable.place_conemlib_mini;
 
 
 
