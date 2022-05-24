@@ -102,6 +102,8 @@ public class FindImage {
 
                 mainImageId = R.drawable.place_foodchd_main;
 
+                break;
+
 
             //편의점
 
@@ -162,6 +164,8 @@ public class FindImage {
             case "CONEMLIB":
 
                 mainImageId = R.drawable.place_conemlib_mini;
+
+                break;
 
 
 
